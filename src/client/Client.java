@@ -44,8 +44,9 @@ public class Client {
         return systemipaddress;
     }
     
-    private List<User> getUsers(String content){
-        String string = content.replace("<", "");
+    private List<User> getUsers(byte [] content){
+        String string = new String(content);
+        string = string.replace("<", "");
         string = string.replace(">", "");
         
         String[] arrString = string.split("\\|");
@@ -67,14 +68,16 @@ public class Client {
 //        String[] request = {Tags.REGISTER, "<huyyyy 1>"};
 //        String[] request = {Tags.LOGOUT, "<huy>"};
 //        String[] request = {Tags.SEARCH, "<bao>"};
-        String[] request = {Tags.FIND_FRIEND, "<huy>"};
+        String[] request = {Tags.FIND_FRIEND, "<trung>"};
         try {
             TagValue tv = new TagValue(request[0], request[1].getBytes());
             writer.writeTag(tv);
             writer.flush();
             tv = reader.getTagValue();
-            List<User> users = getUsers(new String(tv.getContent()));
-
+            List<User> users = getUsers(tv.getContent());
+            for (User usr : users){
+                System.out.println(usr.getUser_name());
+            }
             
         } catch (Exception e) {
             System.err.println("Network error");
