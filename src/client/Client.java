@@ -60,25 +60,29 @@ public class Client {
     }
     
     public Client() throws UnknownHostException, IOException {
+        new Listener(1).start();
         conn = new Socket(InetAddress.getLocalHost(), 9000);
         reader = new TagReader(conn.getInputStream());  
         writer = new TagWriter(conn.getOutputStream());   
 
-//        String[] request = {Tags.LOGIN, "<bao 1 1.1.1.1>"};
-//        String[] request = {Tags.REGISTER, "<huyyyy 1>"};
+//        String[] request = {Tags.LOGIN, "<bao a 1.1.1.1>"};
+//        String[] request = {Tags.REGISTER, "<huyy 1>"};
 //        String[] request = {Tags.LOGOUT, "<huy>"};
 //        String[] request = {Tags.SEARCH, "<bao>"};
-        String[] request = {Tags.FIND_FRIEND, "<trung>"};
+            String[] request = {Tags.FIND_FRIEND, "<bao>"};
+//            String[] request = {Tags.LOGOUT, "<bao>"};
+//        String[] request = {Tags.REQUEST, "<bao huyy>"};
         try {
             TagValue tv = new TagValue(request[0], request[1].getBytes());
             writer.writeTag(tv);
             writer.flush();
             tv = reader.getTagValue();
+            System.out.println(tv.getTag());
             List<User> users = getUsers(tv.getContent());
             for (User usr : users){
                 System.out.println(usr.getUser_name());
             }
-            
+
         } catch (Exception e) {
             System.err.println("Network error");
         }
