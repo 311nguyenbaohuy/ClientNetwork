@@ -46,19 +46,32 @@ public class Client {
         return users;
     }
     
+    private String[] getGroupName(byte [] content){
+        String string = new String(content);
+        string = string.replace("<", "");
+        string = string.replace(">", "");
+        
+        String[] arrString = string.split("\\|");
+        return arrString;
+    }
+    
     public Client() throws UnknownHostException, IOException {
 
         conn = new Socket(InetAddress.getLocalHost(), 9000);
         reader = new TagReader(conn.getInputStream());  
         writer = new TagWriter(conn.getOutputStream());   
 
-        String[] request = {Tags.LOGIN, "<bao 1 1.1.1.1>"};
+//        String[] request = {Tags.LOGIN, "<bao 1 1.1.1.1>"};
 //        String[] request = {Tags.REGISTER, "<huyy 1>"};
 //        String[] request = {Tags.LOGOUT, "<huy>"};
 //        String[] request = {Tags.SEARCH, "<bao>"};
 //            String[] request = {Tags.FIND_FRIEND, "<bao>"};
 //            String[] request = {Tags.LOGOUT, "<bao>"};
 //        String[] request = {Tags.REQUEST, "<bao huyy>"};
+//     String[] request = {Tags.CREATE, "<newGroup huy>"};
+//    String[] request = {Tags.GET_MEMBER, "<abc>"};
+//        String[] request = {Tags.GET_MY_GROUP, "<huy>"};
+        String[] request = {Tags.LEAVE, "<abc huy>"};
         try {
             TagValue tv = new TagValue(request[0], request[1].getBytes());
             writer.writeTag(tv);
@@ -66,10 +79,14 @@ public class Client {
             tv = reader.getTagValue();
             System.out.println(tv.getTag());
             System.out.println(new String(tv.getContent()));
-            List<User> users = getUsers(tv.getContent());
-            for (User usr : users){
-                System.out.println(usr.getUser_name());
+            String [] arrStr = getGroupName(tv.getContent());
+            for (String str : arrStr){
+                System.out.println(str);
             }
+//            List<User> users = getUsers(tv.getContent());
+//            for (User usr : users){
+//                System.out.println(usr.getUser_name());
+//            }
 
         } catch (Exception e) {
             System.err.println("Network error");
@@ -77,10 +94,6 @@ public class Client {
     }
     
     public static void main(String[] args) throws UnknownHostException, MalformedURLException, IOException{
-
-           ParseRoute pr = ParseRoute.getInstance();
-            System.out.println( "Gateway: " + pr.getGateway() );
-            System.out.println( "IP: " + pr.getLocalIPAddress() );
- 
+        new Client();
     }
 }
